@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    class HorizontalLine
+    class HorizontalLine : Figure
     {
-        List<Point> pList;
-        
         public HorizontalLine(int xLeft, int xReiht, int y, char sym)
         {
             pList = new List<Point>();
@@ -19,13 +17,6 @@ namespace Madu
                 pList.Add(p);
             }
 
-        }
-        public void Drow()
-        {
-            foreach (Point p in pList)
-            {
-                p.Draw();
-            }
         }
     }
 }
