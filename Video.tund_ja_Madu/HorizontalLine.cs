@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    class HorizontalLine : Figure
+    class HorizontalLine : Figure // гоизонтальная линия озраничения поля змейки
     {
         public HorizontalLine(int xLeft, int xReiht, int y, char sym)
         {

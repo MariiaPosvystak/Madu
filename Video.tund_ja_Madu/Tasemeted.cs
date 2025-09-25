@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    enum Direction // направления
+    class Tasemeted
     {
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN
     }
 }

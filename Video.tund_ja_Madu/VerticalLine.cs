@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    class VerticalLine : Figure
+    class VerticalLine : Figure // Класс для создания вертикальной линии
     {
         public VerticalLine(int yUp, int yDown, int x, char sym)
         {

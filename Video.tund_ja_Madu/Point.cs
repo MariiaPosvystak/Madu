@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    class Point
+    class Point // движение змейки, отрисовка и поедание еды
     {
         public int x;
         public int y;

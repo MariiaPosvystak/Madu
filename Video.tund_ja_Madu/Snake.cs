@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    class Snake : Figure
+    class Snake : Figure // Все коды, относящиеся к змейке
     {
         Direction direction;
         public Snake(Point tail, int lenght, Direction _direction)
@@ -36,6 +36,16 @@ namespace Madu
             Point nextPoint = new Point(head);
             nextPoint.Move(1, direction);
             return nextPoint;
+        }
+        public bool IsHitTail()
+        {
+            var head = pList.Last();
+            for (int i = 0; i < pList.Count - 2; i++)
+            {
+                if (head.IsHit(pList[i]))
+                    return true;
+            }
+            return false;
         }
         public void HandleKey(ConsoleKey key)
         {

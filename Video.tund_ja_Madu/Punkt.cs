@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    enum Direction // направления
+    class Punkt
     {
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN
+
     }
 }

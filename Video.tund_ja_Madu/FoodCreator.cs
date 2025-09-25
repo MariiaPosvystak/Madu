@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    class FoodCreator
+    class FoodCreator //содание еды в случайных местах
     {
         int mapWidht;
         int mapHeight;
