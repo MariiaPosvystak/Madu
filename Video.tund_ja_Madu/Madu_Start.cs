@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,13 @@ namespace Madu
             Console.CursorVisible = false;
             //Console.SetBufferSize(80, 25);
 
+            Console.WriteLine("Tere tulemast mängima!");
+            Console.WriteLine("Сколько вы хотите что бы появлялось еды? введите количество от 1-6, или рандомным образом(введите 0)");
+            int foodCount = int.Parse(Console.ReadLine());
+            
+            Console.Clear();
+
+
             Walls walls = new Walls(80, 25);
             walls.Draw();
 
@@ -24,18 +32,27 @@ namespace Madu
 
             FoodCreator foodCreator = new FoodCreator(80, 25, '¤');
             Point food = foodCreator.CreateFood();
-            food.Draw();
+            foodCount = foodCreator.GetFood(foodCount);
+            for (int i = 0; i < foodCount; i++)
+                food.Draw();
+
 
             while (true)
             {
+                
+                
                 if (walls.IsHit(snake) || snake.IsHitTail())
                 {
                     break;
                 }
+                
                 if (snake.Eat(food))
                 {
                     food = foodCreator.CreateFood();
-                    food.Draw();
+                    for (int i = 0; i < foodCount; i++)
+                    {
+                        food.Draw();
+                    }
                 }
                 else
                 {
@@ -48,6 +65,7 @@ namespace Madu
                     ConsoleKeyInfo key = Console.ReadKey();
                     snake.HandleKey(key.Key);
                 }
+                
             }
             WriteGameOver();
             Console.ReadLine();

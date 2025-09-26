@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,8 +45,7 @@ namespace Madu
             {
                 if (head.IsHit(pList[i]))
                     return true;
-            }
-            return false;
+            }            return false;
         }
         public void HandleKey(ConsoleKey key)
         {
@@ -58,7 +58,7 @@ namespace Madu
             else if (key == ConsoleKey.UpArrow)
                 direction = Direction.UP;
         }
-        internal bool Eat(Point food)
+        public bool Eat(Point food)
         {
             Point head = GetNextPoint();
             if (head.IsHit(food))

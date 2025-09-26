@@ -8,6 +8,12 @@ namespace Madu
 {
     class Punkt
     {
+        private int punkt = 0;
 
+        public int Points => punkt; 
+
+        public void AddPoints()
+        {
+        }
     }
 }

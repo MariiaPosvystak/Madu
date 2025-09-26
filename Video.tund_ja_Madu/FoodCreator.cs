@@ -26,5 +26,25 @@ namespace Madu
             int y = random.Next(2, mapHeight - 2);
             return new Point(x, y, sym);
         }
+        public int GetFood(int foodCount)
+        {
+            Random rnd = new Random();
+            if (foodCount == 0)
+            {
+                foodCount = rnd.Next(1, 7);
+                return foodCount;
+            }
+            else if (foodCount < 0 || foodCount > 6)
+            {
+                Console.WriteLine("Palun sisesta õige number(0-6)");
+                foodCount = int.Parse(Console.ReadLine());
+                GetFood(foodCount);
+            }
+            else
+            {
+                return foodCount;
+            }
+            return foodCount;
+        }
     }
 }
