@@ -17,6 +17,7 @@ namespace Madu
             Console.WriteLine("Tere tulemast mängu!");
             Console.WriteLine("Vali raskusaste: 1 - Lihtne, 2 - Keskmine, 3 - Raske");
 
+
             int level = 2;
             while (true)
             {
