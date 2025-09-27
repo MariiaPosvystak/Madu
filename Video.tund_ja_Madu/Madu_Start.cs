@@ -13,82 +13,116 @@ namespace Madu
         public static void Main(string[] args)
         {
             Console.CursorVisible = false;
-            //Console.SetBufferSize(80, 25);
 
-            Console.WriteLine("Tere tulemast mängima!");
-            Console.WriteLine("Сколько вы хотите что бы появлялось еды? введите количество от 1-6, или рандомным образом(введите 0)");
-            int foodCount = int.Parse(Console.ReadLine());
-            
+            Console.WriteLine("Tere tulemast mängu!");
+            Console.WriteLine("Vali raskusaste: 1 - Lihtne, 2 - Keskmine, 3 - Raske");
+
+            int level = 2;
+            while (true)
+            {
+                var k = Console.ReadKey(true);
+                if (k.Key == ConsoleKey.D1 || k.Key == ConsoleKey.NumPad1) 
+                { 
+                    level = 1; break; 
+                }
+                if (k.Key == ConsoleKey.D2 || k.Key == ConsoleKey.NumPad2) 
+                { 
+                    level = 2; break; 
+                }
+                if (k.Key == ConsoleKey.D3 || k.Key == ConsoleKey.NumPad3) 
+                { 
+                    level = 3; break; 
+                }
+            }
+
+            int mapWidth = level == 1 ? 60 : level == 2 ? 80 : 100;
+            int mapHeight = level == 1 ? 20 : level == 2 ? 25 : 30;
+            int sleep = level == 1 ? 140 : level == 2 ? 100 : 60;
+
             Console.Clear();
+            Console.WriteLine("Kui palju õunu kuvatakse? (0 - juhuslikult, 1-6 - kindel arv)");
+            int foodCount = 0;
+            if (!int.TryParse(Console.ReadLine(), out foodCount)) foodCount = 0;
 
+            var foodCreator = new FoodCreator(mapWidth, mapHeight, '¤');
+            foodCount = foodCreator.GetFood(foodCount);
 
-            Walls walls = new Walls(80, 25);
+            Console.Clear();
+            Console.SetWindowSize(mapWidth, mapHeight);
+            Console.SetBufferSize(mapWidth, mapHeight);
+
+            Walls walls = new Walls(mapWidth, mapHeight);
             walls.Draw();
 
-            // Отрисовка точек			
-            Point p = new Point(4, 5, '*');
-            Snake snake = new Snake(p, 4, Direction.RIGHT);
+            Point start = new Point(4, 5, '*');
+            Snake snake = new Snake(start, 4, Direction.RIGHT);
             snake.Drow();
 
-            FoodCreator foodCreator = new FoodCreator(80, 25, '¤');
-            Point food = foodCreator.CreateFood();
-            foodCount = foodCreator.GetFood(foodCount);
+            List<Point> foods = new List<Point>();
             for (int i = 0; i < foodCount; i++)
-                food.Draw();
+            {
+                Point f = foodCreator.CreateFood();
+                foods.Add(f);
+                f.Draw();
+            }
 
-
+            int points = 0;
+            DrawScore(points);
 
             while (true)
             {
-                
-                
-                if (walls.IsHit(snake) || snake.IsHitTail())
+                if (walls.IsHit(snake) || snake.IsHitTail()) break;
+
+                bool ate = false;
+                for (int i = 0; i < foods.Count; i++)
                 {
-                    break;
-                }
-                
-                if (snake.Eat(food))
-                {
-                    food = foodCreator.CreateFood();
-                    for (int i = 0; i < foodCount; i++)
+                    if (snake.Eat(foods[i]))
                     {
-                        food.Draw();
+                        ate = true;
+                        points += 10;     
+                        DrawScore(points); 
+
+                        foods[i] = foodCreator.CreateFood();
+                        foods[i].Draw();
+                        break;
                     }
                 }
-                else
-                {
-                    snake.Move();
-                }
 
-                Thread.Sleep(100);
+                if (!ate) 
+                    snake.Move();
+
+                Thread.Sleep(sleep);
                 if (Console.KeyAvailable)
-                {
-                    ConsoleKeyInfo key = Console.ReadKey();
-                    snake.HandleKey(key.Key);
-                }
-                
+                    snake.HandleKey(Console.ReadKey(true).Key);
             }
-            WriteGameOver();
+
+            Console.Clear();
+            Console.Write("Sisesta oma nimi: ");
+            string name = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(name)) name = "Anonüümne";
+
+            Mängijate.UpdateScore(name, points);
+
+            Console.Clear();
+            Console.WriteLine($"Mäng läbi! Sinu tulemus: {points}");
+            Console.WriteLine();
+
+            var allScores = Mängijate.Load().OrderByDescending(s => s.Score).ToList();
+            Console.WriteLine("Parimad 3 mängijat:");
+            for (int i = 0; i < Math.Min(3, allScores.Count); i++)
+                Console.WriteLine($"{i + 1}. {allScores[i].Name} - {allScores[i].Score}");
+
+            Console.WriteLine();
+            Console.WriteLine("Vajuta Enter, et väljuda...");
             Console.ReadLine();
         }
-        static void WriteGameOver()
-        {
-            int xOffset = 25;
-            int yOffset = 8;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.SetCursorPosition(xOffset, yOffset++);
-            WriteText("============================", xOffset, yOffset++);
-            WriteText("И Г Р А    О К О Н Ч Е Н А", xOffset + 1, yOffset++);
-            yOffset++;
-            WriteText("", xOffset + 2, yOffset++);
-            WriteText("", xOffset + 1, yOffset++);
-            WriteText("", xOffset, yOffset++);
-        }
 
-        static void WriteText(String text, int xOffset, int yOffset)
+        static void DrawScore(int points)
         {
-            Console.SetCursorPosition(xOffset, yOffset);
-            Console.WriteLine(text);
+            Console.SetCursorPosition(0, 0);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write($"Punktid: {points}   ");
+            Console.ResetColor();
         }
     }
 }

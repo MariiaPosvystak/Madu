@@ -12,7 +12,7 @@ namespace Madu
         int mapHeight;
         char sym;
 
-        Random random = new Random();
+        static Random random = new Random();
 
         public FoodCreator(int mapWidht, int mapHeight, char sym)
         {
@@ -28,23 +28,26 @@ namespace Madu
         }
         public int GetFood(int foodCount)
         {
-            Random rnd = new Random();
             if (foodCount == 0)
             {
-                foodCount = rnd.Next(1, 7);
-                return foodCount;
+                return random.Next(1, 7);
             }
             else if (foodCount < 0 || foodCount > 6)
             {
-                Console.WriteLine("Palun sisesta õige number(0-6)");
-                foodCount = int.Parse(Console.ReadLine());
-                GetFood(foodCount);
+                Console.WriteLine("Palun sisesta õige number (0-6): ");
+                if (int.TryParse(Console.ReadLine(), out int fc))
+                {
+                    return GetFood(fc);
+                }
+                else
+                {
+                    return GetFood(0);
+                }
             }
             else
             {
                 return foodCount;
             }
-            return foodCount;
         }
     }
 }

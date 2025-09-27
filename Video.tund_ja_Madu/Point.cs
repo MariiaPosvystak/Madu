@@ -53,8 +53,15 @@ namespace Madu
         }
         public void Draw()
         {
-            Console.SetCursorPosition(x, y);
-            Console.Write(sym);
+            try
+            {
+                Console.SetCursorPosition(x, y);
+                Console.Write(sym);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
         public void Clear()
         {

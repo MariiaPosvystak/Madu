@@ -7,33 +7,44 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    class Mängijate
+    static class Mängijate
     {
-        public static void Fail()
-        {
-            //Random rnd = new Random();
-            //try
-            //{
-            //    Console.WriteLine("Sisesta oma nimi: ");
-            //    string nimi = Console.ReadLine();
-            //    Console.WriteLine($"{nimi} sinu tulemus on: ");
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //}
-            //StreamWriter to_file = new StreamWriter(@"..\..\..\Mängijate.txt", true);
-            //for (int i = 0; i >1; i++)
-            //{
-            //    to_file.WriteLine(i);
-            //}
+        private static string file = @"..\..\..\Mängijate.txt";
 
-            //to_file.Close();
-            //StreamReader from_file = new StreamReader(@"..\..\..\Mängijate.txt");
-            //string text = from_file.ReadToEnd();
-            //Console.WriteLine(text);
-            //from_file.Close();
-            //Console.ReadLine();
+        public static List<Punkt> Load()
+        {
+            var list = new List<Punkt>();
+            if (!File.Exists(file)) return list;
+
+            var lines = File.ReadAllLines(file);
+            foreach (var line in lines)
+            {
+                var parts = line.Split(';');
+                if (parts.Length == 2 && int.TryParse(parts[1], out int score))
+                    list.Add(new Punkt { Name = parts[0], Score = score });
+            }
+            return list;
+        }
+
+        public static void Save(List<Punkt> list)
+        {
+            File.WriteAllLines(file, list.Select(s => $"{s.Name};{s.Score}"));
+        }
+
+        public static void UpdateScore(string name, int score)
+        {
+            var list = Load();
+            var existing = list.FirstOrDefault(s => s.Name.Equals(name));
+            if (existing != null)
+            {
+                if (score > existing.Score) existing.Score = score;
+            }
+            else
+            {
+                list.Add(new Punkt { Name = name, Score = score });
+            }
+            list = list.OrderByDescending(s => s.Score).ToList();
+            Save(list);
         }
     }
 }

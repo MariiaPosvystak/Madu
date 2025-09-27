@@ -45,7 +45,8 @@ namespace Madu
             {
                 if (head.IsHit(pList[i]))
                     return true;
-            }            return false;
+            }
+            return false;
         }
         public void HandleKey(ConsoleKey key)
         {
