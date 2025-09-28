@@ -14,9 +14,11 @@ namespace Madu
         {
             Console.CursorVisible = false;
 
+            Params pr = new Params();
+            Sounds sounds = new Sounds(pr.GetResourceFolder());
+
             Console.WriteLine("Tere tulemast mängu!");
             Console.WriteLine("Vali raskusaste: 1 - Lihtne, 2 - Keskmine, 3 - Raske");
-
 
             int level = 2;
             while (true)
@@ -49,6 +51,7 @@ namespace Madu
             foodCount = foodCreator.GetFood(foodCount);
 
             Console.Clear();
+            sounds.Play("foon.mp3");
             Console.SetWindowSize(mapWidth, mapHeight);
             Console.SetBufferSize(mapWidth, mapHeight);
 
@@ -80,6 +83,9 @@ namespace Madu
                     if (snake.Eat(foods[i]))
                     {
                         ate = true;
+
+                        sounds.Play("foon.mp3");
+
                         points += 10;     
                         DrawScore(points); 
 
@@ -99,10 +105,35 @@ namespace Madu
 
             Console.Clear();
             Console.Write("Sisesta oma nimi: ");
-            string name = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(name)) name = "Anonüümne";
+            Console.Clear();
+
+            string name = "";
+            bool validName = false;
+
+            while (!validName)
+            {
+                try
+                {
+                    Console.Write("Sisesta oma nimi (vähemalt 3 tähemärki): ");
+                    name = Console.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(name))
+                        throw new Exception("Nimi ei tohi olla tühi!");
+
+                    if (name.Length < 3)
+                        throw new Exception("Nimi peab olema vähemalt 3 tähemärki pikk!");
+
+                    validName = true; 
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Viga: {ex.Message}");
+                }
+            }
 
             Mängijate.UpdateScore(name, points);
+
+            sounds.Play("gameover.mp3");
 
             Console.Clear();
             Console.WriteLine($"Mäng läbi! Sinu tulemus: {points}");
