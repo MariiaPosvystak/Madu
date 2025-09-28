@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -18,29 +19,13 @@ namespace Madu
             Sounds sounds = new Sounds(pr.GetResourceFolder());
 
             Console.WriteLine("Tere tulemast mängu!");
-            Console.WriteLine("Vali raskusaste: 1 - Lihtne, 2 - Keskmine, 3 - Raske");
 
-            int level = 2;
-            while (true)
-            {
-                var k = Console.ReadKey(true);
-                if (k.Key == ConsoleKey.D1 || k.Key == ConsoleKey.NumPad1) 
-                { 
-                    level = 1; break; 
-                }
-                if (k.Key == ConsoleKey.D2 || k.Key == ConsoleKey.NumPad2) 
-                { 
-                    level = 2; break; 
-                }
-                if (k.Key == ConsoleKey.D3 || k.Key == ConsoleKey.NumPad3) 
-                { 
-                    level = 3; break; 
-                }
-            }
+            Tasemeted settings = new Tasemeted();
+            settings.ChooseLevel();
 
-            int mapWidth = level == 1 ? 60 : level == 2 ? 80 : 100;
-            int mapHeight = level == 1 ? 20 : level == 2 ? 25 : 30;
-            int sleep = level == 1 ? 140 : level == 2 ? 100 : 60;
+            int mapWidth = settings.MapWidth;
+            int mapHeight = settings.MapHeight;
+            int sleep = settings.Sleep;
 
             Console.Clear();
             Console.WriteLine("Kui palju õunu kuvatakse? (0 - juhuslikult, 1-6 - kindel arv)");
@@ -103,6 +88,24 @@ namespace Madu
                     snake.HandleKey(Console.ReadKey(true).Key);
             }
 
+            sounds.Play("gameover.mp3");
+            WriteGameOver(points);
+
+            
+        }
+        static void WriteGameOver(int points)
+        {
+
+            int xOffset = 25;
+            int yOffset = 8;
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            WriteText("============================", xOffset, yOffset++);
+            WriteText("M Ä N G   L Ä B I", xOffset + 1, yOffset++); // Переклад: "ГРА ЗАКІНЧЕНА"
+            yOffset++;
+            WriteText($"Skoor: {points}", xOffset + 2, yOffset++); // Виводимо очки
+            Console.ResetColor();
+
             Console.Clear();
             Console.Write("Sisesta oma nimi: ");
             Console.Clear();
@@ -123,7 +126,7 @@ namespace Madu
                     if (name.Length < 3)
                         throw new Exception("Nimi peab olema vähemalt 3 tähemärki pikk!");
 
-                    validName = true; 
+                    validName = true;
                 }
                 catch (Exception ex)
                 {
@@ -133,10 +136,7 @@ namespace Madu
 
             Mängijate.UpdateScore(name, points);
 
-            sounds.Play("gameover.mp3");
-
             Console.Clear();
-            Console.WriteLine($"Mäng läbi! Sinu tulemus: {points}");
             Console.WriteLine();
 
             var allScores = Mängijate.Load().OrderByDescending(s => s.Score).ToList();
@@ -148,7 +148,11 @@ namespace Madu
             Console.WriteLine("Vajuta Enter, et väljuda...");
             Console.ReadLine();
         }
-
+        static void WriteText(string text, int xOffset, int yOffset)
+        {
+            Console.SetCursorPosition(xOffset, yOffset);
+            Console.WriteLine(text);
+        }
         static void DrawScore(int points)
         {
             Console.SetCursorPosition(0, 0);
