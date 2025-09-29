@@ -9,7 +9,7 @@ namespace Madu
 {
     static class Mängijate
     {
-        private static string file = @"..\..\..\..\Mängijate.txt";
+        private static string file = @"..\..\..\resources\Mängijate.txt";
 
         public static List<Punkt> Load()
         {

@@ -30,7 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NAudio.WaveFormRenderer" Version="2.0.0" />
+    <PackageReference Include="MMaitre.MediaCaptureReader" Version="2.1.6" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NAudio.Core" Version="2.2.1" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,8 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using NAudio;
+using NAudio.Wave;
 
 namespace Madu
 {
@@ -15,9 +17,13 @@ namespace Madu
         {
             Console.CursorVisible = false;
 
-            Params pr = new Params();
-            Sounds sounds = new Sounds(pr.GetResourceFolder());
+            //Params pr = new Params();
+            //Sounds sounds = new Sounds(pr.GetResourceFolder());
 
+            //string pathToMedia = @"..\..\..\..\resources";
+
+            Sounds sounds = new Sounds(@"..\..\..\resources");
+            
             Console.WriteLine("Tere tulemast mängu!");
 
             Tasemeted settings = new Tasemeted();
@@ -31,11 +37,20 @@ namespace Madu
             Console.WriteLine("Kui palju õunu kuvatakse? (0 - juhuslikult, 1-6 - kindel arv)");
             int foodCount = 0;
             if (!int.TryParse(Console.ReadLine(), out foodCount)) foodCount = 0;
-
-            var foodCreator = new FoodCreator(mapWidth, mapHeight, '¤');
+            var foodCreator = new FoodCreator(mapWidth, mapHeight, '§');
             foodCount = foodCreator.GetFood(foodCount);
-
             Console.Clear();
+
+            Console.WriteLine("Mis värvi sa tahad, et madu oleks?");
+            Console.WriteLine("1 - Roheline");
+            Console.WriteLine("2 - Sinine");
+            Console.WriteLine("3 - Hall");
+            Console.WriteLine("4 - Punane");
+            Console.WriteLine("5 - Valge");
+            Color color = new Color();
+            color.ChoosColor();
+            Console.Clear();
+
             sounds.Play("foon.mp3");
             Console.SetWindowSize(mapWidth, mapHeight);
             Console.SetBufferSize(mapWidth, mapHeight);
@@ -43,9 +58,11 @@ namespace Madu
             Walls walls = new Walls(mapWidth, mapHeight);
             walls.Draw();
 
-            Point start = new Point(4, 5, '*');
+            color.SetParameters();
+            Point start = new Point(4, 5, '■');
             Snake snake = new Snake(start, 4, Direction.RIGHT);
             snake.Drow();
+            Console.ResetColor();
 
             List<Point> foods = new List<Point>();
             for (int i = 0; i < foodCount; i++)
@@ -71,8 +88,8 @@ namespace Madu
 
                         sounds.Play("foon.mp3");
 
-                        points += 10;     
-                        DrawScore(points); 
+                        points += 10;
+                        DrawScore(points);
 
                         foods[i] = foodCreator.CreateFood();
                         foods[i].Draw();
@@ -80,8 +97,10 @@ namespace Madu
                     }
                 }
 
-                if (!ate) 
+                if (!ate)
+                    color.SetParameters();
                     snake.Move();
+                    Console.ResetColor();
 
                 Thread.Sleep(sleep);
                 if (Console.KeyAvailable)
@@ -90,7 +109,7 @@ namespace Madu
 
             sounds.Play("gameover.mp3");
             WriteGameOver(points);
-
+            
             
         }
         static void WriteGameOver(int points)
@@ -101,13 +120,11 @@ namespace Madu
             Console.ForegroundColor = ConsoleColor.Red;
 
             WriteText("============================", xOffset, yOffset++);
-            WriteText("M Ä N G   L Ä B I", xOffset + 1, yOffset++); // Переклад: "ГРА ЗАКІНЧЕНА"
+            WriteText("M Ä N G   L Ä B I", xOffset + 1, yOffset++); 
             yOffset++;
-            WriteText($"Skoor: {points}", xOffset + 2, yOffset++); // Виводимо очки
+            WriteText($"Skoor: {points}", xOffset + 2, yOffset++); 
             Console.ResetColor();
 
-            Console.Clear();
-            Console.Write("Sisesta oma nimi: ");
             Console.Clear();
 
             string name = "";
@@ -117,7 +134,7 @@ namespace Madu
             {
                 try
                 {
-                    Console.Write("Sisesta oma nimi (vähemalt 3 tähemärki): ");
+                    Console.Write("Sisesta oma nimi: ");
                     name = Console.ReadLine();
 
                     if (string.IsNullOrWhiteSpace(name))
