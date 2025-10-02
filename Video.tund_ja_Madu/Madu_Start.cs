@@ -37,17 +37,24 @@ namespace Madu
             Console.WriteLine("Kui palju õunu kuvatakse? (0 - juhuslikult, 1-6 - kindel arv)");
             int foodCount = 0;
             if (!int.TryParse(Console.ReadLine(), out foodCount)) foodCount = 0;
-            var foodCreator = new FoodCreator(mapWidth, mapHeight, '§');
+            Console.WriteLine("Mida sa süüa tahad?");
+            Console.WriteLine("1 - Õun");
+            Console.WriteLine("2 - Mustikas");
+            Console.WriteLine("3 - Banaan");
+            Console.WriteLine("4 - Kirs");
+            Color color = new Color();
+            color.Choosfood();
+            char sym = color.sfood();
+            var foodCreator = new FoodCreator(mapWidth, mapHeight, sym);
+            Console.ResetColor();
             foodCount = foodCreator.GetFood(foodCount);
             Console.Clear();
-
             Console.WriteLine("Mis värvi sa tahad, et madu oleks?");
             Console.WriteLine("1 - Roheline");
             Console.WriteLine("2 - Sinine");
             Console.WriteLine("3 - Hall");
             Console.WriteLine("4 - Punane");
             Console.WriteLine("5 - Valge");
-            Color color = new Color();
             color.ChoosColor();
             Console.Clear();
 
@@ -57,8 +64,6 @@ namespace Madu
 
             Walls walls = new Walls(mapWidth, mapHeight);
             walls.Draw();
-
-            color.SetParameters();
             Point start = new Point(4, 5, '■');
             Snake snake = new Snake(start, 4, Direction.RIGHT);
             snake.Drow();
@@ -79,6 +84,7 @@ namespace Madu
             {
                 if (walls.IsHit(snake) || snake.IsHitTail()) break;
 
+                color.Setfood();
                 bool ate = false;
                 for (int i = 0; i < foods.Count; i++)
                 {
@@ -86,7 +92,7 @@ namespace Madu
                     {
                         ate = true;
 
-                        sounds.Play("foon.mp3");
+                        sounds.Play("eat.mp3");
 
                         points += 10;
                         DrawScore(points);
@@ -105,6 +111,7 @@ namespace Madu
                 Thread.Sleep(sleep);
                 if (Console.KeyAvailable)
                     snake.HandleKey(Console.ReadKey(true).Key);
+                Console.ResetColor();
             }
 
             sounds.Play("gameover.mp3");
@@ -124,8 +131,6 @@ namespace Madu
             yOffset++;
             WriteText($"Skoor: {points}", xOffset + 2, yOffset++); 
             Console.ResetColor();
-
-            Console.Clear();
 
             string name = "";
             bool validName = false;
