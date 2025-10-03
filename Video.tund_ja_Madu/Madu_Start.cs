@@ -15,6 +15,7 @@ namespace Madu
     {
         public static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
 
             //Params pr = new Params();
@@ -25,7 +26,7 @@ namespace Madu
             
             Console.WriteLine("Tere tulemast mängu!");
 
-            Tasemeted settings = new Tasemeted();
+            Tasemet settings = new Tasemet();
             settings.ChooseLevel();
 
             int mapWidth = settings.MapWidth;

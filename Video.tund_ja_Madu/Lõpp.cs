@@ -11,7 +11,7 @@ namespace Madu
     {
         public void WriteGameOver(int points)
         {
-            Tasemeted settings = new Tasemeted();
+            Tasemet settings = new Tasemet();
             int sleep = settings.Sleep;
             int xOffset = 25;
             int yOffset = 8;

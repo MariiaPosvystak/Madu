@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Madu
 {
-    class Tasemeted
+    class Tasemet
     {
         public int Level { get; private set; } = 2;
         public int MapWidth { get; private set; }
