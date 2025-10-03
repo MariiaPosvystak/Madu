@@ -19,13 +19,14 @@ namespace Madu
 
             //Params pr = new Params();
             //Sounds sounds = new Sounds(pr.GetResourceFolder());
-
             //string pathToMedia = @"..\..\..\..\resources";
 
+            //Воспроизведение звуков с класса Sounds, папки resources 
             Sounds sounds = new Sounds(@"..\..\..\resources");
             
             Console.WriteLine("Tere tulemast mängu!");
 
+            //Выбор уровня
             Tasemeted settings = new Tasemeted();
             settings.ChooseLevel();
 
@@ -34,6 +35,7 @@ namespace Madu
             int sleep = settings.Sleep;
 
             Console.Clear();
+            //Выбор количества и типа еды которые будут появлятся на экране
             Console.WriteLine("Kui palju õunu kuvatakse? (0 - juhuslikult, 1-6 - kindel arv)");
             int foodCount = 0;
             if (!int.TryParse(Console.ReadLine(), out foodCount)) foodCount = 0;
@@ -45,10 +47,11 @@ namespace Madu
             Color color = new Color();
             color.Choosfood();
             char sym = color.sfood();
-            var foodCreator = new FoodCreator(mapWidth, mapHeight, sym);
             Console.ResetColor();
+            var foodCreator = new FoodCreator(mapWidth, mapHeight, sym);
             foodCount = foodCreator.GetFood(foodCount);
             Console.Clear();
+            //Выбор цвета змейки
             Console.WriteLine("Mis värvi sa tahad, et madu oleks?");
             Console.WriteLine("1 - Roheline");
             Console.WriteLine("2 - Sinine");
@@ -58,10 +61,12 @@ namespace Madu
             color.ChoosColor();
             Console.Clear();
 
+            //Запуск музыки и установка параметров размера окна
             sounds.Play("foon.mp3");
             Console.SetWindowSize(mapWidth, mapHeight);
             Console.SetBufferSize(mapWidth, mapHeight);
 
+            //Рисовка змеи и полей игры
             Walls walls = new Walls(mapWidth, mapHeight);
             walls.Draw();
             Point start = new Point(4, 5, '■');
@@ -69,41 +74,44 @@ namespace Madu
             snake.Drow();
             Console.ResetColor();
 
+            //Рисование еды
             List<Point> foods = new List<Point>();
             for (int i = 0; i < foodCount; i++)
             {
+                color.Setfood();
                 Point f = foodCreator.CreateFood();
                 foods.Add(f);
                 f.Draw();
             }
-
+            Lõpp over = new Lõpp();
+            //Вывод очков на экран 
             int points = 0;
-            DrawScore(points);
+            over.DrawScore(points);
 
             while (true)
             {
                 if (walls.IsHit(snake) || snake.IsHitTail()) break;
 
-                color.Setfood();
                 bool ate = false;
                 for (int i = 0; i < foods.Count; i++)
                 {
                     if (snake.Eat(foods[i]))
                     {
                         ate = true;
-
+                        //Когда змейка ест играет звук и добавляються очки
                         sounds.Play("eat.mp3");
 
                         points += 10;
-                        DrawScore(points);
+                        over.DrawScore(points);
 
+                        color.Setfood();
                         foods[i] = foodCreator.CreateFood();
                         foods[i].Draw();
                         break;
                     }
                 }
 
-                if (!ate)
+                if (!ate)//усли не ест то просто движется дальше
                     color.SetParameters();
                     snake.Move();
                     Console.ResetColor();
@@ -111,76 +119,12 @@ namespace Madu
                 Thread.Sleep(sleep);
                 if (Console.KeyAvailable)
                     snake.HandleKey(Console.ReadKey(true).Key);
-                Console.ResetColor();
             }
 
-            sounds.Play("gameover.mp3");
-            WriteGameOver(points);
+            sounds.Play("gameover.mp3");//когда проигрываеш отображаються очки и играет звук
+            over.WriteGameOver(points);
             
             
-        }
-        static void WriteGameOver(int points)
-        {
-
-            int xOffset = 25;
-            int yOffset = 8;
-            Console.ForegroundColor = ConsoleColor.Red;
-
-            WriteText("============================", xOffset, yOffset++);
-            WriteText("M Ä N G   L Ä B I", xOffset + 1, yOffset++); 
-            yOffset++;
-            WriteText($"Skoor: {points}", xOffset + 2, yOffset++); 
-            Console.ResetColor();
-
-            string name = "";
-            bool validName = false;
-
-            while (!validName)
-            {
-                try
-                {
-                    Console.Write("Sisesta oma nimi: ");
-                    name = Console.ReadLine();
-
-                    if (string.IsNullOrWhiteSpace(name))
-                        throw new Exception("Nimi ei tohi olla tühi!");
-
-                    if (name.Length < 3)
-                        throw new Exception("Nimi peab olema vähemalt 3 tähemärki pikk!");
-
-                    validName = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Viga: {ex.Message}");
-                }
-            }
-
-            Mängijate.UpdateScore(name, points);
-
-            Console.Clear();
-            Console.WriteLine();
-
-            var allScores = Mängijate.Load().OrderByDescending(s => s.Score).ToList();
-            Console.WriteLine("Parimad 3 mängijat:");
-            for (int i = 0; i < Math.Min(3, allScores.Count); i++)
-                Console.WriteLine($"{i + 1}. {allScores[i].Name} - {allScores[i].Score}");
-
-            Console.WriteLine();
-            Console.WriteLine("Vajuta Enter, et väljuda...");
-            Console.ReadLine();
-        }
-        static void WriteText(string text, int xOffset, int yOffset)
-        {
-            Console.SetCursorPosition(xOffset, yOffset);
-            Console.WriteLine(text);
-        }
-        static void DrawScore(int points)
-        {
-            Console.SetCursorPosition(0, 0);
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write($"Punktid: {points}   ");
-            Console.ResetColor();
         }
     }
 }

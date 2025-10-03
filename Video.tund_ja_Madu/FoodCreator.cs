@@ -28,8 +28,6 @@ namespace Madu
         }
         public int GetFood(int foodCount)
         {
-            Color foodcolor = new Color();
-            foodcolor = Setfood();
             if (foodCount == 0)
             {
                 return random.Next(1, 7);
